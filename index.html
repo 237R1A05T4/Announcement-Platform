@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📢 Student-Teacher Announcements</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #93c5fd, #a5b4fc);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+    }
+    header {
+      background-color: #4f46e5;
+      color: white;
+      padding: 20px 0;
+      font-size: 26px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    main {
+      background: #fff;
+      width: 90%;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #4338ca;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+      border: 2px solid #a5b4fc;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s;
+    }
+    input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 5px rgba(79, 70, 229, 0.3);
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #059669;
+      transform: scale(1.05);
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 25px;
+      text-align: left;
+    }
+    li {
+      background-color: #eef2ff;
+      border-left: 5px solid #4f46e5;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    footer {
+      margin-top: 40px;
+      background-color: #e2e8f0;
+      padding: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>📢 Student-Teacher Announcement Board</header>
+  <main>
+    <h2>Post or View Announcements</h2>
+    <div>
+      <input type="text" id="announcement" placeholder="Enter your announcement...">
+      <button onclick="postAnnouncement()">Post</button>
+    </div>
+    <ul id="list"></ul>
+  </main>
+  <footer>© 2025 Student-Teacher Platform | DevOps Lab Project</footer>
+  <script>
+    async function fetchAnnouncements() {
+      const res = await fetch('/announcements');
+      const data = await res.json();
+      renderAnnouncements(data);
+    }
+    function renderAnnouncements(data) {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      data.slice().reverse().forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = "📢 " + a.text;
+        list.appendChild(li);
+      });
+    }
+    async function postAnnouncement() {
+      const input = document.getElementById('announcement');
+      const text = input.value.trim();
+      if (!text) return alert("Please enter an announcement!");
+      const res = await fetch('/announcements', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ text })
+      });
+      if (res.ok) {
+        const li = document.createElement('li');
+        li.textContent = "📢 " + text;
+        const list = document.getElementById('list');
+        list.insertBefore(li, list.firstChild);
+        input.value = '';
+      } else {
+        alert("Error posting announcement!");
+      }
+    }
+    fetchAnnouncements();
+  </script>
+</body>
+</html>
